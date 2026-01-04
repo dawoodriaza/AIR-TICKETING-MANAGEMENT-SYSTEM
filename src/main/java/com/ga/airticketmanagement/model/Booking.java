@@ -1,0 +1,44 @@
+package com.ga.airticketmanagement.model;
+
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+
+
+@Entity
+@Table(name = "Booking")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class Booking {
+
+
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+
+    @Column(updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @Column(updatable = false)
+    @CreationTimestamp
+    private LocalDateTime booking_date;
+
+
+    @Column
+    private float total_price;
+
+    @Column
+    private String status;
+
+
+
+}
