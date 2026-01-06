@@ -1,7 +1,9 @@
+
 ---
 ## API Documentation (DRAFT)
 
 ### Flight
+
   | Method | Endpoint                                             | Functionality                      | Acceess |
   | ------ | ---------------------------------------------------- | ---------------------------------- | ------- |
   | GET    | `/api/flights`                                       | Retrieve list of flights           | PUBLIC  |
