@@ -3,6 +3,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -23,6 +25,13 @@ public class User {
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @Column
+    private Boolean isEmailVerified;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @OneToOne(
         cascade = CascadeType.ALL, fetch =FetchType.LAZY
     )
@@ -33,5 +42,10 @@ public class User {
     @JsonIgnore
     public String getPassword() {
         return password;
+    }
+
+    @PrePersist
+    public void prePersist(){
+        this.isEmailVerified= false;
     }
 }

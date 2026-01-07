@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
+
 @Service
 public class UserService {
     private  UserRepository userRepository;
@@ -39,13 +41,14 @@ public class UserService {
 
     }
 
-    
+
 //    public void setUserRepository(UserRepository userRepository) {
 //        this.userRepository = userRepository;
 //    }
     public User createUser(User userObject){
         System.out.println("Calling createUser from the Service ==>");
         if (!userRepository.existsByEmailAddress(userObject.getEmailAddress())){
+             userObject.setPassword(passwordEncoder.encode(userObject.getPassword()));
             return userRepository.save(userObject);
         }else {
               throw  new ResponseStatusException(HttpStatus.CONFLICT,"User with email address already exists");
@@ -56,6 +59,7 @@ public class UserService {
         return userRepository.findUserByEmailAddress(email);
     }
     public ResponseEntity<?> loginUser(LoginRequest loginRequest) {
+        System.out.println(loginRequest.getPassword());
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
         try {
             Authentication authentication = authenticationManager
