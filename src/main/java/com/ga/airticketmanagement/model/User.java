@@ -27,6 +27,10 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @Column(name = "is_active", nullable = false)
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private boolean active = true;
+
     @Column(nullable = false)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private boolean emailVerified = false;
@@ -49,6 +53,7 @@ public class User {
     @PrePersist
     public void prePersist(){
         this.emailVerified = false;
+        this.active = true;
         this.role = Role.CUSTOMER;
     }
 }
