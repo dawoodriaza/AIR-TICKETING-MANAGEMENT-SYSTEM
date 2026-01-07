@@ -47,6 +47,7 @@ public class ImageEntity {
 
     @PrePersist
     public void prePersist() {
+
         this.uploadedAt = LocalDateTime.now();
     }
 }
