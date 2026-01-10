@@ -1,18 +1,14 @@
 package com.ga.airticketmanagement.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.NonNull;
 
 import java.util.Map;
 import java.util.Objects;
 
-public record ApiErrorResponse(@NonNull String code, @NonNull String message, @NonNull Map<String, Object> data) {
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public record ApiErrorResponse(String code, String message, Map<String, Object> data) {
     public ApiErrorResponse(String code, String message) {
         this(code, message, Map.of());
-    }
-
-    public ApiErrorResponse(String code, String message, Map<String, Object> data) {
-        this.code = code;
-        this.message = message;
-        this.data = data;
     }
 }
