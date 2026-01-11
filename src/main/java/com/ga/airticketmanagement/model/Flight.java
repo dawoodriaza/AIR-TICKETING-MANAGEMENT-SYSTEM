@@ -1,6 +1,5 @@
 package com.ga.airticketmanagement.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,49 +8,47 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "airports")
-public class Airport {
+@Table(name = "flights")
+public class Flight {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private String name;
+    private LocalDateTime departureTime;
 
     @Column
-    private String country;
+    private LocalDateTime arrivalTime;
 
     @Column
-    private String code;
+    private BigDecimal price;
 
+    @Column
     @CreationTimestamp
-    @Column
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
     @Column
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "originAirport", orphanRemoval = true)
-    @JsonIgnore
-    private List<Flight> originFlights;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "origin_airport_id")
+    private Airport originAirport;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "destinationAirport", orphanRemoval = true)
-    @JsonIgnore
-    private List<Flight> destinationFlights;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "destination_airport_id")
+    private Airport destinationAirport;
 
-    @ManyToOne
-    @JoinColumn(name="user_id")
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
-
 }
