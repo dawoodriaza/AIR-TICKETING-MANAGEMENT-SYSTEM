@@ -1,13 +1,16 @@
 package com.ga.airticketmanagement.controller;
 
-import com.ga.airticketmanagement.dto.request.CreateFlightRequest;
+import com.ga.airticketmanagement.dto.request.FlightRequest;
 import com.ga.airticketmanagement.dto.request.UpdateFlightRequest;
+import com.ga.airticketmanagement.dto.response.FlightResponse;
+import com.ga.airticketmanagement.dto.response.ListResponse;
 import com.ga.airticketmanagement.model.Flight;
-import com.ga.airticketmanagement.repository.FlightRepository;
 import com.ga.airticketmanagement.service.FlightService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,30 +27,37 @@ public class FlightController {
     }
 
     @GetMapping("/flights")
-    public List<Flight> getFlights() {
+    public ListResponse<FlightResponse> getFlights(Pageable pageable) {
 
-        return flightService.getFlights();
+        return flightService.getFlights(pageable);
     }
 
+    @GetMapping("/flights/{flightId}")
+    public FlightResponse getFlight(@PathVariable Long flightId) {
+
+        return flightService.getFlight(flightId);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/flights")
-    public ResponseEntity<Flight> createFlight(@RequestBody CreateFlightRequest flightObject) {
+    public FlightResponse createFlight(@RequestBody FlightRequest flightObject) {
 
-        Flight flight = flightService.createFlight(flightObject);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(flight);
+        return flightService.createFlight(flightObject);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/flights/{flightId}")
-    public ResponseEntity<Flight> updateFlight(@PathVariable Long flightId, @RequestBody UpdateFlightRequest flightObject) {
+    public FlightResponse updateFlight(@PathVariable Long flightId, @RequestBody UpdateFlightRequest flightObject) {
 
-        Flight flight = flightService.updateFlight(flightId, flightObject);
-        return ResponseEntity.status(HttpStatus.OK).body(flight);
+        return flightService.updateFlight(flightId, flightObject);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/flights/{flightId}")
-    public String deleteFlight(@PathVariable Long flightId) {
+    public void deleteFlight(@PathVariable Long flightId) {
 
-        return flightService.deleteFlight(flightId);
+        flightService.deleteFlight(flightId);
     }
 
 }
