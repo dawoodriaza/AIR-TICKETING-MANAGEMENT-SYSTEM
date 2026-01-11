@@ -5,7 +5,11 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.FetchMode;
+import org.hibernate.annotations.Fetch;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+
+import java.util.List;
 
 @Setter
 @Getter
@@ -40,10 +44,13 @@ public class User {
     private Role role;
 
     @OneToOne(
-        cascade = CascadeType.ALL, fetch =FetchType.LAZY
+        cascade = CascadeType.ALL, fetch = FetchType.LAZY
     )
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
     private UserProfile userProfile;
+
+    @OneToMany(mappedBy = "user", fetch =  FetchType.LAZY)
+    private List<Airport> airports;
 
     @JsonIgnore
     public String getPassword() {

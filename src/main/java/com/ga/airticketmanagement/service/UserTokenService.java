@@ -1,6 +1,6 @@
 package com.ga.airticketmanagement.service;
 
-import com.ga.airticketmanagement.exceptions.ExpiredVerificationTokenException;
+import com.ga.airticketmanagement.exception.ExpiredVerificationTokenException;
 import com.ga.airticketmanagement.model.User;
 import com.ga.airticketmanagement.model.token.TokenType;
 import com.ga.airticketmanagement.model.token.UserToken;
