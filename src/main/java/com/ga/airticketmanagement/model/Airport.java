@@ -49,6 +49,8 @@ public class Airport {
     @JsonIgnore
     private List<Flight> destinationFlights;
 
-
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private User user;
 
 }
