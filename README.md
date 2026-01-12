@@ -2,16 +2,21 @@
 --- 
 ## API Documentation (DRAFT)
 
-### Email Verification
+### Auth
 
-| Request Type | URL                                           | Functionality             | Access | 
-|--------------|-----------------------------------------------|---------------------------|--------|
-| GET          | /auth/users/verify?token=(verification-token) | Verify Email              | PUBLIC |
-| POST         | /auth/users/resend-verification               | Resend Email Verification | PUBLIC |
+| Request Type | Endpoint                           | Functionality                     | Acceess |
+|--------------|------------------------------------|-----------------------------------|---------|
+| POST         | `/auth/users/register`             | Register new user                 | PUBLIC  |
+| POST         | `/auth/users/login`                | Login user                        | PUBLIC  |
+| POST         | `/auth/users/resend-verification`  | Request resend verification email | PUBLIC  |
+| GET          | `/auth/users/verify/{token}`       | Verify User Email                 | PUBLIC  |
+| POST         | `/auth/users/forgot-password`      | Request password reset email      | PUBLIC  |
+| POST         | `/auth/users/reset-password/token` | Reset password with token         | PUBLIC  |
+| PATCH        | `/auth/users/change-password`      | Change password while logged-in   | PRIVATE |
 
 ### Airport
 
-| Method | Endpoint                    | Functionality             | Acceess |
+| Request Type | Endpoint                    | Functionality             | Acceess |
 | ------ | --------------------------- | ------------------------- | ------- |
 | GET    | `/api/airports/{airportId}` | Retrieve airport          | PUBLIC  |
 | GET    | `/api/airports`             | Retrieve List of airports | PUBLIC  |
@@ -21,7 +26,7 @@
 
 ### Flight
 
-  | Method | Endpoint                                             | Functionality                      | Acceess |
+  | Request Type | Endpoint                                             | Functionality                      | Acceess |
   | ------ | ---------------------------------------------------- | ---------------------------------- | ------- |
   | GET    | `/api/flights`                                       | Retrieve list of flights           | PUBLIC  |
   | GET    | `/api/airports/{airportId}/flights/{airportId}`      | Retrieve flight                    | PUBLIC  |
