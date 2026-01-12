@@ -48,23 +48,23 @@ public class UserController {
         return ResponseEntity.ok("If you are registered, the verification email has been sent.");
     }
 
-    @PostMapping("/reset-password/request")
+    @PostMapping("/forgot-password")
     public ResponseEntity<?> requestResetPassword(@RequestBody EmailPasswordResetRequest request) {
 
         userService.requestResetPassword(request);
         return ResponseEntity.ok("If your email exists, an email has been sent to reset your password.");
     }
 
-    @PostMapping("/reset-password-token")
-    public ResponseEntity<?> resetPasword(@RequestBody PasswordResetTokenRequest request) {
-        userService.resetPasswordToken(request);
-        return ResponseEntity.ok("");
+    @PostMapping("/reset-password/token")
+    public ResponseEntity<?> resetPasswordByToken(@RequestBody PasswordResetTokenRequest request) {
+        userService.resetPasswordByToken(request);
+        return ResponseEntity.ok("Password reset successful.");
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPasword(@RequestBody PasswordResetRequest request) {
         userService.resetPassword(request);
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok("Password reset successful.");
     }
 
 
