@@ -1,7 +1,7 @@
 package com.ga.airticketmanagement.controller;
 
+import com.ga.airticketmanagement.dto.request.*;
 import com.ga.airticketmanagement.model.User;
-import com.ga.airticketmanagement.dto.request.LoginRequest;
 import com.ga.airticketmanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,9 +42,30 @@ public class UserController {
     }
 
     @PostMapping("/resend-verification")
-    public ResponseEntity<?> resendVerification(@RequestBody String email) {
+    public ResponseEntity<?> resendVerification(@RequestBody EmailVerificationRequest request) {
 
-        userService.resendVerification(email);
+        userService.resendVerification(request);
         return ResponseEntity.ok("If you are registered, the verification email has been sent.");
     }
+
+    @PostMapping("/reset-password/request")
+    public ResponseEntity<?> requestResetPassword(@RequestBody EmailPasswordResetRequest request) {
+
+        userService.requestResetPassword(request);
+        return ResponseEntity.ok("If your email exists, an email has been sent to reset your password.");
+    }
+
+    @PostMapping("/reset-password-token")
+    public ResponseEntity<?> resetPasword(@RequestBody PasswordResetTokenRequest request) {
+        userService.resetPasswordToken(request);
+        return ResponseEntity.ok("");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPasword(@RequestBody PasswordResetRequest request) {
+        userService.resetPassword(request);
+        return ResponseEntity.ok("");
+    }
+
+
 }
