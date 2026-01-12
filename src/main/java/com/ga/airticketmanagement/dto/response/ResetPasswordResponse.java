@@ -1,4 +1,3 @@
 package com.ga.airticketmanagement.dto.response;
 
-public record ResetPasswordResponse() {
-}
+public record ResetPasswordResponse(String message) {}

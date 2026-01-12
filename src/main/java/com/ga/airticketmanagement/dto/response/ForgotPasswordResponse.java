@@ -1,4 +1,5 @@
 package com.ga.airticketmanagement.dto.response;
 
-public class ForgotPasswordResponse {
-}
+public record ForgotPasswordResponse(
+        String message
+){}
