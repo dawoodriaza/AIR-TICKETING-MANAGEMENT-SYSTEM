@@ -1,5 +1,6 @@
 package com.ga.airticketmanagement.listener;
 
+import com.ga.airticketmanagement.event.EmailPasswordResetEvent;
 import com.ga.airticketmanagement.event.EmailVerificationRequestedEvent;
 import com.ga.airticketmanagement.service.AccountEmailService;
 import org.springframework.scheduling.annotation.Async;
@@ -20,5 +21,11 @@ public class EmailEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleEmailVerification(EmailVerificationRequestedEvent event){
         accountEmailService.sendVerificationEmail(event.user(), event.token());
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleEmailPasswordReset(EmailPasswordResetEvent event){
+        accountEmailService.sendResetPasswordEmail(event.user(), event.token());
     }
 }
