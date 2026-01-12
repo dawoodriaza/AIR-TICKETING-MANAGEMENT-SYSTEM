@@ -6,12 +6,14 @@ import com.ga.airticketmanagement.model.token.TokenType;
 import com.ga.airticketmanagement.model.token.UserToken;
 import com.ga.airticketmanagement.repository.UserTokenRepository;
 import com.ga.airticketmanagement.util.TokenGenerator;
+import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -28,21 +30,27 @@ public class UserTokenService {
         this.userTokenRepository = userTokenRepository;
     }
 
-    public UserToken createToken(User user, TokenType type, Duration ttl) {
-        Optional<UserToken> oldToken = userTokenRepository.findByTokenAndType(user.getEmailAddress(), type);
-        oldToken.ifPresent(token -> userTokenRepository.delete(token));
+    public UserToken createToken(User user, String token, TokenType type, Duration ttl) {
+        invalidateToken(user, type);
+
         UserToken userToken = new UserToken();
         userToken.setType(type);
-        userToken.setToken(TokenGenerator.generateToken());
+        userToken.setToken(token);
         userToken.setEmail(user.getEmailAddress());
         userToken.setExpiresAt(LocalDateTime.now().plus(ttl));
 
         return userTokenRepository.save(userToken);
     }
 
+    public void invalidateToken(User user, TokenType type){
+        Optional<UserToken> oldToken = userTokenRepository.findByEmailAndType(user.getEmailAddress(), type);
+        oldToken.ifPresent(t -> userTokenRepository.delete(t));
+    }
+
     public UserToken validateToken(String token, TokenType type) {
 
-        UserToken userToken = userTokenRepository.findByTokenAndType(token, type)
+        String hashedToken = TokenGenerator.hash(token);
+        UserToken userToken = userTokenRepository.findByTokenAndType(hashedToken, type)
                 .orElseThrow(() -> new RuntimeException("Invalid token"));
 
         if(userToken.getExpiresAt().isBefore(LocalDateTime.now())){
@@ -78,5 +86,7 @@ public class UserTokenService {
 
         return link.toString();
     }
+
+
 
 }
