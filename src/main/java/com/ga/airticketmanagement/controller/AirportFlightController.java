@@ -1,20 +1,14 @@
 package com.ga.airticketmanagement.controller;
 
+import com.ga.airticketmanagement.dto.request.FlightByOriginAirportRequest;
 import com.ga.airticketmanagement.dto.request.FlightRequest;
-import com.ga.airticketmanagement.dto.request.UpdateFlightByOriginAirportRequest;
 import com.ga.airticketmanagement.dto.response.FlightResponse;
 import com.ga.airticketmanagement.dto.response.ListResponse;
-import com.ga.airticketmanagement.model.Flight;
 import com.ga.airticketmanagement.service.FlightService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/airports")
@@ -36,7 +30,7 @@ public class AirportFlightController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{airportId}/flights/{flightId}")
-    public FlightResponse updateFlight(@PathVariable Long airportId, @PathVariable Long flightId, @RequestBody UpdateFlightByOriginAirportRequest flightObject) {
+    public FlightResponse updateFlight(@PathVariable Long airportId, @PathVariable Long flightId, @RequestBody FlightByOriginAirportRequest flightObject) {
 
         return flightService.updateFlightByOriginAirport(airportId, flightId, flightObject);
     }
@@ -53,7 +47,6 @@ public class AirportFlightController {
         return flightService.getAirportFlights(airportId, pageable);
     }
 
-
     @GetMapping("/{airportId}/departures")
     public ListResponse<FlightResponse> getAirportDepartures(@PathVariable Long airportId, Pageable pageable) {
 
@@ -65,7 +58,4 @@ public class AirportFlightController {
 
         return flightService.getAirportArrivals(airportId, pageable);
     }
-
-
-
 }
