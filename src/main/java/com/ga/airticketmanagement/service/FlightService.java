@@ -2,9 +2,8 @@ package com.ga.airticketmanagement.service;
 
 import com.ga.airticketmanagement.dto.mapper.FlightMapper;
 import com.ga.airticketmanagement.dto.mapper.PageMetaFactory;
+import com.ga.airticketmanagement.dto.request.FlightByOriginAirportRequest;
 import com.ga.airticketmanagement.dto.request.FlightRequest;
-import com.ga.airticketmanagement.dto.request.UpdateFlightByOriginAirportRequest;
-import com.ga.airticketmanagement.dto.request.UpdateFlightRequest;
 import com.ga.airticketmanagement.dto.response.FlightResponse;
 import com.ga.airticketmanagement.dto.response.ListResponse;
 import com.ga.airticketmanagement.dto.response.PageMeta;
@@ -85,7 +84,7 @@ public class FlightService {
         return flightMapper.toResponse(flight);
     }
 
-    public FlightResponse updateFlightByOriginAirport(Long airportId, Long flightId, UpdateFlightByOriginAirportRequest flightObject) {
+    public FlightResponse updateFlightByOriginAirport(Long airportId, Long flightId, FlightByOriginAirportRequest flightObject) {
 
         Flight flight = validateFlight(airportId, flightId);
         Airport destinationAirport = airportRepository.findById(flightObject.getDestinationAirportId()).orElseThrow(
@@ -100,7 +99,7 @@ public class FlightService {
         return flightMapper.toResponse(flight);
     }
 
-    public FlightResponse updateFlight(Long flightId,UpdateFlightRequest flightObject) {
+    public FlightResponse updateFlight(Long flightId,FlightRequest flightObject) {
 
         Flight flight = flightRepository.findById(flightId).orElseThrow(
                 () -> new InformationNotFoundException("Flight not found"));
