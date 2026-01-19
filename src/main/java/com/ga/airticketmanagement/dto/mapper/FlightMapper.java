@@ -1,34 +1,19 @@
 package com.ga.airticketmanagement.dto.mapper;
 
-import com.ga.airticketmanagement.dto.request.CreateFlightByOriginAirportRequest;
 import com.ga.airticketmanagement.dto.request.FlightRequest;
 import com.ga.airticketmanagement.dto.response.FlightResponse;
 import com.ga.airticketmanagement.model.Flight;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
-@Component
-public class FlightMapper {
-
-    public FlightResponse toResponse(Flight flight) {
-        return new FlightResponse(
-                flight.getId(),
-                flight.getDepartureTime(),
-                flight.getArrivalTime(),
-                flight.getPrice(),
-                flight.getCreatedAt(),
-                flight.getUpdatedAt(),
-                flight.getOriginAirport().getId(),
-                flight.getDestinationAirport().getId(),
-                flight.getUser().getId()
-        );
-    }
-
-    public Flight toEntity(FlightRequest request) {
-        Flight flight = new Flight();
-        flight.setDepartureTime(request.getDepartureTime());
-        flight.setArrivalTime(request.getArrivalTime());
-        flight.setPrice(request.getPrice());
-        return flight;
-    }
-
+@Mapper(componentModel = "spring")
+public interface FlightMapper {
+    @Mappings({
+            @Mapping(source = "user.id", target = "userId"),
+            @Mapping(source = "originAirport.id", target = "originAirportId"),
+            @Mapping(source = "destinationAirport.id", target = "destinationAirportId"),
+    })
+    FlightResponse toResponse(Flight flight);
+    Flight toEntity(FlightRequest flightRequest);
 }

@@ -8,9 +8,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class FlightRequest extends CreateFlightByOriginAirportRequest {
+public class FlightRequest extends FlightByOriginAirportRequest {
 
     @NotNull
     private Long originAirportId;
-
 }

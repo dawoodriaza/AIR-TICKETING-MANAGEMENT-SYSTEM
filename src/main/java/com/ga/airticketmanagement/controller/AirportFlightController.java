@@ -1,7 +1,7 @@
 package com.ga.airticketmanagement.controller;
 
+import com.ga.airticketmanagement.dto.request.FlightByOriginAirportRequest;
 import com.ga.airticketmanagement.dto.request.FlightRequest;
-import com.ga.airticketmanagement.dto.request.UpdateFlightByOriginAirportRequest;
 import com.ga.airticketmanagement.dto.response.FlightResponse;
 import com.ga.airticketmanagement.dto.response.ListResponse;
 import com.ga.airticketmanagement.service.FlightService;
@@ -30,7 +30,7 @@ public class AirportFlightController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{airportId}/flights/{flightId}")
-    public FlightResponse updateFlight(@PathVariable Long airportId, @PathVariable Long flightId, @RequestBody UpdateFlightByOriginAirportRequest flightObject) {
+    public FlightResponse updateFlight(@PathVariable Long airportId, @PathVariable Long flightId, @RequestBody FlightByOriginAirportRequest flightObject) {
 
         return flightService.updateFlightByOriginAirport(airportId, flightId, flightObject);
     }
