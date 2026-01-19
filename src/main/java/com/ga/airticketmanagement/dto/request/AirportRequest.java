@@ -21,7 +21,4 @@ public class AirportRequest {
     @NotBlank
     @Size(min = 3)
     private String code;
-
-    @NotNull
-    private Long userId;
 }
