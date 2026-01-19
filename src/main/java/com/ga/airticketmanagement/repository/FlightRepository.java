@@ -24,4 +24,5 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     Page<Flight> findByOriginAirport(@Param("airportId") Long airportId, Pageable pageable);
     @Query("SELECT f FROM Flight f WHERE f.destinationAirport.id = :airportId")
     Page<Flight> findByDestinationAirport(@Param("airportId") Long airportId, Pageable pageable);
+    Optional<Flight> findByFlightNo(String flightNo);
 }

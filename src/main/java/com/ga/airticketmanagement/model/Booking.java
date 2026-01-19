@@ -19,47 +19,47 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(updatable = false)
+    @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column
+    @Column(name = "passenger_name")
     private String passengerName;
 
-    @Column
+    @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column
+    @Column(name = "from_city")
     private String fromCity;
 
-    @Column
+    @Column(name = "to_city")
     private String toCity;
 
-    @Column
+    @Column(name = "travel_date")
     private LocalDate travelDate;
 
-    @Column
+    @Column(name = "number_of_seats")
     private Integer numberOfSeats;
 
-    @Column
+    @Column(name = "price_per_seat")
     private Double pricePerSeat;
 
-    @Column
+    @Column(name = "total_price")
     private Double totalPrice;
 
-    @Column
+    @Column(name = "seat_no")
     private String seatNo;
 
-    @Column
+    @Column(name = "flight_no")
     private String flightNo;
 
-    @Column
+    @Column(name = "otp")
     private String otp;
 
-    @Column
+    @Column(name = "otp_verified")
     private Boolean otpVerified = false;
 
-    @Column
+    @Column(name = "status")
     private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -71,9 +71,12 @@ public class Booking {
     private Flight flight;
 
     @PrePersist
-    public void calculateTotalPrice() {
+    public void prePersist() {
         if (pricePerSeat != null && numberOfSeats != null) {
             this.totalPrice = pricePerSeat * numberOfSeats;
+        }
+        if (otpVerified == null) {
+            this.otpVerified = false;
         }
     }
 }

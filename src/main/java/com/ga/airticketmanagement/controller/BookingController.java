@@ -24,13 +24,19 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingResponseDTO create(@RequestBody BookingCreateDTO dto) {
-        return bookingService.create(dto);
+    public ResponseEntity<BookingResponseDTO> create(@RequestBody BookingCreateDTO dto) {
+        BookingResponseDTO response = bookingService.create(dto);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/verify")
-    public String verify(@RequestBody OTPVerifyDTO dto) {
-        return bookingService.verifyOtp(dto);
+    @PostMapping("/booking/{bookingId}/verify")
+    public ResponseEntity<String> verifyOtp(
+            @PathVariable Long bookingId,
+            @RequestBody OTPVerifyDTO dto
+    ) {
+        dto.setBookingId(bookingId);
+        String result = bookingService.verifyOtp(dto);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")

@@ -216,7 +216,7 @@ public class BookingSeeder {
         logger.info("   - {} CONFIRMED bookings", confirmed);
         logger.info("   - {} PENDING bookings", pending);
         logger.info("   - {} CANCELLED bookings", cancelled);
-        logger.info("   Total passengers: {}", bookings.stream().mapToInt(Booking::getNumberOfPassengers).sum());
+        logger.info("   Total passengers: {}", bookings.stream().mapToInt(Booking::getNumberOfSeats).sum());
     }
 
     private Booking createBooking(String name, int numberOfPassengers,
@@ -226,9 +226,9 @@ public class BookingSeeder {
         user.ifPresent(user1 -> {
 
 
-            booking.setName(name);
-            booking.setNumberOfPassengers(numberOfPassengers);
-            booking.setTotal_price(totalPrice);
+            booking.setPassengerName(name);
+            booking.setNumberOfSeats(numberOfPassengers);
+            booking.setTotalPrice((double) totalPrice);
             booking.setStatus(status);
             booking.setUser(user1);
             booking.setFlight(flight);

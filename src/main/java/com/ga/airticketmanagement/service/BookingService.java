@@ -6,7 +6,11 @@ import com.ga.airticketmanagement.dto.response.BookingResponseDTO;
 import com.ga.airticketmanagement.dto.response.OTPVerifyDTO;
 import com.ga.airticketmanagement.exception.InformationNotFoundException;
 import com.ga.airticketmanagement.model.Booking;
+import com.ga.airticketmanagement.model.Flight;
+import com.ga.airticketmanagement.model.User;
 import com.ga.airticketmanagement.repository.BookingRepository;
+import com.ga.airticketmanagement.repository.FlightRepository;
+import com.ga.airticketmanagement.security.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,8 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final WhatsAppService whatsAppService;
     private final BookingMapper mapper;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
+    private final FlightRepository flightRepository;
 
     public List<Booking> getBookings() {
         return bookingRepository.findAll();
@@ -65,55 +71,68 @@ public class BookingService {
                         new InformationNotFoundException("Booking with Id " + id + " not found"));
         bookingRepository.delete(booking);
     }
-
     @Transactional
     public BookingResponseDTO create(BookingCreateDTO dto) {
-        Booking b = mapper.toEntity(dto);
-        b.setStatus("CREATED");
+        Booking booking = mapper.toEntity(dto);
+        User currentUser = authenticatedUserProvider.getAuthenticatedUser();
+        booking.setUser(currentUser);
 
+
+        if (dto.getFlightNo() != null) {
+            Flight flight = flightRepository.findByFlightNo(dto.getFlightNo())
+                    .orElseThrow(() -> new InformationNotFoundException("Flight not found"));
+            booking.setFlight(flight);
+        }
+
+        booking.setStatus("CREATED");
         String otp = String.valueOf(new Random().nextInt(9000) + 1000);
-        b.setOtp(otp);
+        booking.setOtp(otp);
+        Booking saved = bookingRepository.save(booking);
 
-        bookingRepository.save(b);
 
-        whatsAppService.send(
-                b.getPhoneNumber(),
-                "🔐 Your OTP for booking verification: " + otp,
-                "OTP",
-                b,
-                null,
-                otp
-        );
+        if (saved.getPhoneNumber() != null) {
+            whatsAppService.send(
+                    saved.getPhoneNumber(),
+                    "Your OTP for booking verification: " + otp,
+                    "OTP",
+                    saved,
+                    null,
+                    otp
+            );
+        }
 
-        return mapper.toDTO(b);
+        return mapper.toDTO(saved);
     }
+
 
     @Transactional
     public String verifyOtp(OTPVerifyDTO dto) {
-        Booking b = bookingRepository.findById(dto.getBookingId())
+        if (dto == null || dto.getBookingId() == null) {
+            throw new IllegalArgumentException("Booking ID must not be null");
+        }
+        Booking booking = bookingRepository.findById(dto.getBookingId())
                 .orElseThrow(() -> new InformationNotFoundException("Booking not found"));
-
-        if (!b.getOtp().equals(dto.getOtp())) {
+        if (!dto.getOtp().equals(booking.getOtp())) {
             throw new InformationNotFoundException("Invalid OTP");
         }
 
-        b.setOtpVerified(true);
-        b.setStatus("CONFIRMED");
-
-        bookingRepository.save(b);
+        booking.setOtpVerified(true);
+        booking.setStatus("CONFIRMED");
+        bookingRepository.save(booking);
 
         whatsAppService.send(
-                b.getPhoneNumber(),
-                "✅ Booking Confirmed!\nFlight: " + b.getFlightNo() +
-                        "\nFrom: " + b.getFromCity() + " To: " + b.getToCity() +
-                        "\nSeats: " + b.getNumberOfSeats() +
-                        "\nTotal: $" + b.getTotalPrice(),
+                booking.getPhoneNumber(),
+                "Booking Confirmed!\nFlight: " + booking.getFlightNo() +
+                        "\nFrom: " + booking.getFromCity() + " To: " + booking.getToCity() +
+                        "\nSeats: " + booking.getNumberOfSeats() +
+                        "\nTotal: $" + booking.getTotalPrice(),
                 "BOOKING",
-                b,
+                booking,
                 null,
                 null
         );
 
         return "VERIFIED";
     }
+
 }

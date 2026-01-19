@@ -1,20 +1,22 @@
 package com.ga.airticketmanagement.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.FetchMode;
+import org.hibernate.annotations.Fetch;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.List;
-
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
+ @AllArgsConstructor
 @Entity
 @Table(name = "users")
+@ToString(exclude = {"password","userProfile"})
+@JsonIgnoreProperties(ignoreUnknown = false)
 public class User {
-
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +30,11 @@ public class User {
     private String password;
 
     @Column(name = "is_active", nullable = false)
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private boolean active = true;
 
     @Column(nullable = false)
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private boolean emailVerified = false;
 
     @Column
@@ -39,7 +43,6 @@ public class User {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
-    @JsonIgnore
     private UserProfile userProfile;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -60,7 +63,7 @@ public class User {
     }
 
     @PrePersist
-    public void prePersist() {
+    public void prePersist(){
         this.emailVerified = false;
         this.active = true;
     }

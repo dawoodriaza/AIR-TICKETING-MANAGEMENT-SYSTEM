@@ -36,6 +36,10 @@ public class WhatsAppService {
         log.setOtpCode(otp);
 
         try {
+            System.out.println("Sending WhatsApp to: " + phone);
+            System.out.println("Message: " + message);
+            System.out.println("From: " + from);
+
             Message.creator(
                     new PhoneNumber("whatsapp:" + phone),
                     new PhoneNumber(from),
@@ -43,9 +47,12 @@ public class WhatsAppService {
             ).create();
 
             log.setStatus("SENT");
+            System.out.println("WhatsApp sent successfully");
         } catch (Exception e) {
             log.setStatus("FAILED");
             log.setMessage(message + " | ERROR: " + e.getMessage());
+            System.err.println("WhatsApp failed: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return repo.save(log);

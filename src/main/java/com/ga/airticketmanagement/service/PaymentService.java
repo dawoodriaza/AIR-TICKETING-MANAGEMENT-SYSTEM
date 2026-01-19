@@ -44,10 +44,10 @@ public class PaymentService {
 
         whatsAppService.send(
                 b.getPhoneNumber(),
-                "💰 Payment Successful!\n" +
+                "Payment Successful!\n" +
                         "Amount: $" + p.getAmount() + "\n" +
                         "Reference: " + p.getTransactionRef() + "\n" +
-                        "🎫 Download Ticket:\n" + pdfLink,
+                        "Download Ticket:\n" + pdfLink,
                 "PAYMENT",
                 b,
                 p,
