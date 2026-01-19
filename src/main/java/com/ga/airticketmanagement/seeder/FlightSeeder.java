@@ -64,7 +64,8 @@ public class FlightSeeder {
                     jfk, lhr,
                     LocalDateTime.now().plusDays(5).withHour(10).withMinute(0).withSecond(0),
                     LocalDateTime.now().plusDays(5).withHour(22).withMinute(30).withSecond(0),
-                    new BigDecimal("599.99")
+                    new BigDecimal("599.99"),
+                    "GF114"
             ));
         }
 
@@ -74,7 +75,8 @@ public class FlightSeeder {
                     lhr, dxb,
                     LocalDateTime.now().plusDays(7).withHour(14).withMinute(30).withSecond(0),
                     LocalDateTime.now().plusDays(8).withHour(0).withMinute(45).withSecond(0),
-                    new BigDecimal("749.99")
+                    new BigDecimal("749.99"),
+                    "GF113"
             ));
         }
 
@@ -84,7 +86,8 @@ public class FlightSeeder {
                     dxb, sin,
                     LocalDateTime.now().plusDays(10).withHour(2).withMinute(15).withSecond(0),
                     LocalDateTime.now().plusDays(10).withHour(13).withMinute(30).withSecond(0),
-                    new BigDecimal("899.99")
+                    new BigDecimal("899.99"),
+                    "GF112"
             ));
         }
 
@@ -94,7 +97,8 @@ public class FlightSeeder {
                     sin, nrt,
                     LocalDateTime.now().plusDays(12).withHour(8).withMinute(0).withSecond(0),
                     LocalDateTime.now().plusDays(12).withHour(16).withMinute(15).withSecond(0),
-                    new BigDecimal("649.99")
+                    new BigDecimal("649.99"),
+                    "GF111"
             ));
         }
 
@@ -104,7 +108,8 @@ public class FlightSeeder {
                     lax, cdg,
                     LocalDateTime.now().plusDays(3).withHour(19).withMinute(0).withSecond(0),
                     LocalDateTime.now().plusDays(4).withHour(14).withMinute(30).withSecond(0),
-                    new BigDecimal("699.99")
+                    new BigDecimal("699.99"),
+                    "GF110"
             ));
         }
 
@@ -114,7 +119,8 @@ public class FlightSeeder {
                     cdg, fco,
                     LocalDateTime.now().plusDays(15).withHour(11).withMinute(30).withSecond(0),
                     LocalDateTime.now().plusDays(15).withHour(13).withMinute(45).withSecond(0),
-                    new BigDecimal("199.99")
+                    new BigDecimal("199.99"),
+                    "GF109"
             ));
         }
 
@@ -124,7 +130,8 @@ public class FlightSeeder {
                     syd, bkk,
                     LocalDateTime.now().plusDays(8).withHour(22).withMinute(0).withSecond(0),
                     LocalDateTime.now().plusDays(9).withHour(5).withMinute(30).withSecond(0),
-                    new BigDecimal("549.99")
+                    new BigDecimal("549.99"),
+                    "GF108"
             ));
         }
 
@@ -134,7 +141,8 @@ public class FlightSeeder {
                     yyz, mex,
                     LocalDateTime.now().plusDays(6).withHour(7).withMinute(30).withSecond(0),
                     LocalDateTime.now().plusDays(6).withHour(13).withMinute(15).withSecond(0),
-                    new BigDecimal("399.99")
+                    new BigDecimal("399.99"),
+                    "GF107"
             ));
         }
 
@@ -144,7 +152,8 @@ public class FlightSeeder {
                     txl, ist,
                     LocalDateTime.now().plusDays(2).withHour(16).withMinute(0).withSecond(0),
                     LocalDateTime.now().plusDays(2).withHour(20).withMinute(30).withSecond(0),
-                    new BigDecimal("299.99")
+                    new BigDecimal("299.99"),
+                    "GF106"
             ));
         }
 
@@ -154,7 +163,8 @@ public class FlightSeeder {
                     bom, lhr,
                     LocalDateTime.now().plusDays(4).withHour(3).withMinute(0).withSecond(0),
                     LocalDateTime.now().plusDays(4).withHour(8).withMinute(30).withSecond(0),
-                    new BigDecimal("799.99")
+                    new BigDecimal("799.99"),
+                    "GF105"
             ));
         }
 
@@ -164,7 +174,8 @@ public class FlightSeeder {
                     nrt, lax,
                     LocalDateTime.now().plusDays(9).withHour(11).withMinute(0).withSecond(0),
                     LocalDateTime.now().plusDays(9).withHour(5).withMinute(30).withSecond(0),
-                    new BigDecimal("899.99")
+                    new BigDecimal("899.99"),
+                    "GF104"
             ));
         }
 
@@ -174,7 +185,8 @@ public class FlightSeeder {
                     dxb, jfk,
                     LocalDateTime.now().plusDays(11).withHour(8).withMinute(15).withSecond(0),
                     LocalDateTime.now().plusDays(11).withHour(14).withMinute(45).withSecond(0),
-                    new BigDecimal("949.99")
+                    new BigDecimal("949.99"),
+                    "GF104"
             ));
         }
 
@@ -184,7 +196,8 @@ public class FlightSeeder {
                     bkk, sin,
                     LocalDateTime.now().plusDays(13).withHour(15).withMinute(30).withSecond(0),
                     LocalDateTime.now().plusDays(13).withHour(17).withMinute(45).withSecond(0),
-                    new BigDecimal("149.99")
+                    new BigDecimal("149.99"),
+                    "GF103"
             ));
         }
 
@@ -194,7 +207,8 @@ public class FlightSeeder {
                     fco, ist,
                     LocalDateTime.now().plusDays(14).withHour(9).withMinute(0).withSecond(0),
                     LocalDateTime.now().plusDays(14).withHour(12).withMinute(30).withSecond(0),
-                    new BigDecimal("259.99")
+                    new BigDecimal("259.99"),
+                    "GF102"
             ));
         }
 
@@ -204,7 +218,8 @@ public class FlightSeeder {
                     mex, lax,
                     LocalDateTime.now().plusDays(16).withHour(13).withMinute(0).withSecond(0),
                     LocalDateTime.now().plusDays(16).withHour(16).withMinute(30).withSecond(0),
-                    new BigDecimal("349.99")
+                    new BigDecimal("349.99"),
+                    "GF101"
             ));
         }
 
@@ -219,13 +234,14 @@ public class FlightSeeder {
 
     private Flight createFlight(Airport origin, Airport destination,
                                 LocalDateTime departureTime, LocalDateTime arrivalTime,
-                                BigDecimal price) {
+                                BigDecimal price, String flightNo) {
         Flight flight = new Flight();
         flight.setOriginAirport(origin);
         flight.setDestinationAirport(destination);
         flight.setDepartureTime(departureTime);
         flight.setArrivalTime(arrivalTime);
         flight.setPrice(price);
+        flight.setFlightNo(flightNo);
         return flight;
     }
 }

@@ -66,23 +66,37 @@ public class UserService {
     @Transactional
     public User createUser(User userObject) {
         System.out.println("Calling createUser from the Service ==>");
+        System.out.println("Email received: " + userObject.getEmailAddress());  // ADD THIS
+        System.out.println("User object: " + userObject);
+        if (userObject.getEmailAddress() == null || userObject.getEmailAddress().isBlank()) {
+            throw new ValidationException("Email address is required");
+        }
         if (!userRepository.existsByEmailAddress(userObject.getEmailAddress())) {
             userObject.setRole(Role.CUSTOMER);
             userObject.setPassword(passwordEncoder.encode(userObject.getPassword()));
-            User newUser = userRepository.save(userObject);
+            User newUser = userRepository.saveAndFlush(userObject);
+            String email = newUser.getEmailAddress();
+
             String newToken = TokenGenerator.generateToken();
+
             UserToken userToken = userTokenService.createToken(
                     newUser,
                     newToken,
                     TokenType.EMAIL_VERIFICATION,
                     Duration.ofHours(24)
             );
-            applicationEventPublisher.publishEvent(new EmailVerificationRequestedEvent(newUser, newToken));
+
+            applicationEventPublisher.publishEvent(
+                    new EmailVerificationRequestedEvent(newUser, newToken)
+            );
+
             return newUser;
+
         } else {
             throw new EmailUsedException("User with email address already exists");
         }
     }
+
 
     public ResponseEntity<?> loginUser(LoginRequest loginRequest) {
 

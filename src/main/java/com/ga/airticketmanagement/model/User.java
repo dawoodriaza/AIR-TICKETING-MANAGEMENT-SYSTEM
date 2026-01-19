@@ -1,27 +1,21 @@
 package com.ga.airticketmanagement.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.FetchMode;
 import org.hibernate.annotations.Fetch;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-
-
 import java.util.List;
-
 @Setter
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
+ @AllArgsConstructor
 @Entity
 @Table(name = "users")
 @ToString(exclude = {"password","userProfile"})
-
+@JsonIgnoreProperties(ignoreUnknown = false)
 public class User {
     @Id
     @Column
@@ -45,27 +39,23 @@ public class User {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private Role role= Role.CUSTOMER;
+    private Role role = Role.CUSTOMER;
 
-    @OneToOne(
-        cascade = CascadeType.ALL, fetch = FetchType.LAZY
-    )
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
     private UserProfile userProfile;
 
-    @OneToMany(mappedBy = "user", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Airport> createdAirports;
 
-    @OneToMany(mappedBy = "user", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Flight> createdFlights;
 
-    @OneToMany(mappedBy = "user", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Booking> bookings;
-
-
 
     @JsonIgnore
     public String getPassword() {
