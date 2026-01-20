@@ -227,6 +227,14 @@ public class UserService {
         User user = authenticatedUserProvider.getAuthenticatedUser();
         UserProfile profile = user.getUserProfile();
 
+        // add profile to existing user without profile
+        if(profile == null){
+            UserProfile userProfile = new UserProfile();
+            userProfile.setUser(user);
+            user.setUserProfile(userProfile);
+            userRepository.save(user);
+        }
+
         return new AuthenticatedUserResponse(
                 user.getId(),
                 user.getRole(),
