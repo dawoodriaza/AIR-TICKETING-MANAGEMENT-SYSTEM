@@ -148,7 +148,6 @@ public class UserService {
 
     @Transactional
     public void verifyUser(String token) {
-
         UserToken userToken = userTokenService.validateToken(token, TokenType.EMAIL_VERIFICATION);
         userRepository.findUserByEmailAddress(userToken.getEmail()).ifPresent(
                 user -> {

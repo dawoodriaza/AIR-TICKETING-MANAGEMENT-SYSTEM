@@ -1,5 +1,6 @@
 package com.ga.airticketmanagement.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -11,11 +12,14 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
+    @Value("${app.frontend.base-url}")
+    private String frontEndBaseUrl;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("${app.front-end.base-url}"));
+        config.setAllowedOrigins(List.of(frontEndBaseUrl));
         config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
