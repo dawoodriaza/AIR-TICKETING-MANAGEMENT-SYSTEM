@@ -1,8 +1,5 @@
 package com.ga.airticketmanagement.service;
 
-
-
-
 import com.ga.airticketmanagement.exception.InformationNotFoundException;
 import com.ga.airticketmanagement.model.ImageEntity;
 import com.ga.airticketmanagement.repository.ImageRepository;
@@ -13,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,6 +32,66 @@ public class ImageService {
     private String uploadDir;
 
 
+    private Path resolveUploadDirectory() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        boolean isWindows = osName.contains("win");
+        
+        Path uploadDirectoryPath;
+        
+        if (uploadDir.startsWith("/") && !uploadDir.startsWith("//")) {
+            if (isWindows) {
+                String projectRoot = System.getProperty("user.dir");
+                uploadDirectoryPath = Paths.get(projectRoot, uploadDir.substring(1));
+            } else {
+                uploadDirectoryPath = Paths.get(uploadDir);
+            }
+        } else if (uploadDir.contains(":\\") || uploadDir.startsWith("\\\\")) {
+            uploadDirectoryPath = Paths.get(uploadDir);
+        } else {
+            String projectRoot = System.getProperty("user.dir");
+            uploadDirectoryPath = Paths.get(projectRoot, uploadDir);
+        }
+        
+        uploadDirectoryPath = uploadDirectoryPath.normalize().toAbsolutePath();
+        logger.info("Resolved upload directory: {} (OS: {})", uploadDirectoryPath, osName);
+        return uploadDirectoryPath;
+    }
+
+    private Path resolveFilePath(String storedFilePath) {
+        if (storedFilePath == null || storedFilePath.isBlank()) {
+            return null;
+        }
+        
+        String osName = System.getProperty("os.name").toLowerCase();
+        boolean isWindows = osName.contains("win");
+        String normalizedPath = storedFilePath.replace("\\", "/");
+        Path path;
+        
+        if (normalizedPath.matches("^[A-Za-z]:/.*") || storedFilePath.contains(":\\")) {
+            path = Paths.get(storedFilePath);
+        } else if (normalizedPath.startsWith("/")) {
+            if (isWindows) {
+                String projectRoot = System.getProperty("user.dir");
+                path = Paths.get(projectRoot, normalizedPath.substring(1));
+            } else {
+                path = Paths.get(normalizedPath);
+            }
+        } else {
+            path = Paths.get(storedFilePath);
+            if (!Files.exists(path)) {
+                Path uploadDirPath = resolveUploadDirectory();
+                String fileName = Paths.get(normalizedPath).getFileName().toString();
+                Path alternativePath = uploadDirPath.resolve(fileName);
+                if (Files.exists(alternativePath)) {
+                    return alternativePath.normalize().toAbsolutePath();
+                }
+            }
+        }
+        
+        return path.normalize().toAbsolutePath();
+    }
+
+
     public ImageEntity saveImage(MultipartFile file, Long userId) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty or null");
@@ -50,52 +106,23 @@ public class ImageService {
         long fileSize = file.getSize();
 
         String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+        Path uploadDirectoryPath = resolveUploadDirectory();
 
-        // Normalize the upload directory path
-        // Handle absolute paths starting with / on Windows
-        Path uploadDirectoryPath;
-        if (uploadDir.startsWith("/") && !uploadDir.startsWith("//")) {
-            // Unix-style absolute path
-            if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                // On Windows, convert /assets/uploads to a relative path from project root
-                // or use it as-is if it's meant to be in the project directory
-                // For now, we'll make it relative to the current working directory
-                String projectRoot = System.getProperty("user.dir");
-                uploadDirectoryPath = Paths.get(projectRoot, uploadDir.substring(1)).toAbsolutePath().normalize();
-                logger.info("Windows detected. Converting path from {} to {}", uploadDir, uploadDirectoryPath);
-            } else {
-                // On Unix/Linux/Mac, use as absolute path
-                uploadDirectoryPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-            }
-        } else {
-            // Relative path or Windows absolute path (C:\...)
-            uploadDirectoryPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-        }
-        
-        File uploadDirectory = uploadDirectoryPath.toFile();
-
-        // Create directory if it doesn't exist
-        if (!uploadDirectory.exists()) {
-            boolean created = uploadDirectory.mkdirs();
-            if (!created) {
-                throw new IOException("Failed to create upload directory: " + uploadDirectoryPath);
-            }
-            logger.info("Created upload directory: {}", uploadDirectoryPath);
+        try {
+            Files.createDirectories(uploadDirectoryPath);
+            logger.info("Upload directory ready: {}", uploadDirectoryPath);
+        } catch (IOException e) {
+            logger.error("Failed to create upload directory: {}", uploadDirectoryPath, e);
+            throw new IOException("Failed to create upload directory: " + uploadDirectoryPath, e);
         }
 
-        // Check if directory is actually a directory and writable
-        if (!uploadDirectory.isDirectory()) {
-            throw new IOException("Upload path exists but is not a directory: " + uploadDirectoryPath);
-        }
-        if (!uploadDirectory.canWrite()) {
+        if (!Files.isWritable(uploadDirectoryPath)) {
             throw new IOException("Upload directory is not writable: " + uploadDirectoryPath);
         }
 
-        // Create the full file path
         Path filePath = uploadDirectoryPath.resolve(uniqueFileName);
         logger.info("Saving file to: {}", filePath);
 
-        // Copy the file
         try {
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             logger.info("File saved successfully: {}", filePath);
@@ -104,19 +131,16 @@ public class ImageService {
             throw new IOException("Failed to save file: " + e.getMessage(), e);
         }
 
-        // Verify file was actually saved
         if (!Files.exists(filePath)) {
             throw new IOException("File was not saved. Path: " + filePath);
         }
 
-
         ImageEntity imageEntity = new ImageEntity();
-
         imageEntity.setFileName(uniqueFileName);
         imageEntity.setOriginalFileName(originalFileName);
         imageEntity.setFileType(contentType);
         imageEntity.setFileSize(fileSize);
-        imageEntity.setFilePath(filePath.toString());
+        imageEntity.setFilePath(filePath.toString().replace("\\", "/"));
         imageEntity.setUserId(userId);
 
         ImageEntity savedEntity = imageRepository.save(imageEntity);
@@ -144,17 +168,21 @@ public class ImageService {
 
         ImageEntity imageEntity = imageRepository.findById(id).orElseThrow(()-> new InformationNotFoundException ("imageEntity with Id " + id + " not found"));
 
-        imageRepository.findById(id).ifPresent(image -> {
-            try {
-
-                Path path = Paths.get(image.getFilePath());
-
+        try {
+            Path path = resolveFilePath(imageEntity.getFilePath());
+            
+            if (path != null && Files.exists(path)) {
                 Files.deleteIfExists(path);
-            } catch (IOException e) {
-                e.printStackTrace();
+                logger.info("Deleted image file: {}", path);
+            } else {
+                logger.warn("Image file not found for deletion: {}", imageEntity.getFilePath());
             }
-            imageRepository.deleteById(id);
-        });
+        } catch (IOException e) {
+            logger.error("Failed to delete image file: {}", imageEntity.getFilePath(), e);
+            e.printStackTrace();
+        }
+        
+        imageRepository.deleteById(id);
 
         return true;
     }
@@ -168,7 +196,12 @@ public class ImageService {
             return null;
         }
 
-        Path path = Paths.get(image.getFilePath());
+        Path path = resolveFilePath(image.getFilePath());
+        
+        if (path == null || !Files.exists(path)) {
+            logger.warn("Image file not found at path: {}", image.getFilePath());
+            return null;
+        }
 
         return Files.readAllBytes(path);
     }
