@@ -13,4 +13,5 @@ public interface AirportRepository extends JpaRepository<Airport, Long>, JpaSpec
     Optional<Airport> findByName(String name);
 
     Airport findByCode(String code);
+    Airport findFirstByCode(String code);
 }
