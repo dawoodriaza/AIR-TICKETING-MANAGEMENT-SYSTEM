@@ -19,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AirportService {
@@ -41,8 +42,15 @@ public class AirportService {
         airportRepository.findByName(airportObject.getName())
                 .ifPresent(
                 a -> {
-                    throw new InformationFoundException("Airport with name " + airportObject.getName() + " already exists");
+                    if(a.getName().equalsIgnoreCase(airportObject.getName())){
+                        throw new InformationFoundException("Airport with name " + airportObject.getName() + " already exists");
+                    }
                 });
+
+        Airport exists = airportRepository.findFirstByCode(airportObject.getCode());
+        if (exists.getCode().equalsIgnoreCase(airportObject.getCode())) {
+            throw new InformationFoundException("Airport with code " + airportObject.getCode() + " already exists");
+        }
 
         airport.setUser(user);
         airport = airportRepository.save(airport);

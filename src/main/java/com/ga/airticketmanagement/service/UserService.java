@@ -270,8 +270,6 @@ public class UserService {
                 .orElseThrow(() -> new InformationNotFoundException("User not found with id: " + userId));
 
         user.setActive(false);
-        // Optionally set a deletedAt timestamp if you have that field
-        // user.setDeletedAt(LocalDateTime.now());
 
         return userRepository.save(user);
     }
@@ -285,7 +283,6 @@ public class UserService {
                 .orElseThrow(() -> new InformationNotFoundException("User not found with id: " + userId));
 
         user.setActive(true);
-        // user.setDeletedAt(null);
 
         return userRepository.save(user);
     }
