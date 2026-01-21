@@ -84,6 +84,20 @@ public class BookingService {
         return new ListResponse<>(data, meta);
     }
 
+    public ListResponse<BookingResponse> getBookingsByUserId(Long userId, Pageable pageable) {
+        Specification<Booking> spec = BookingSpecification.withSearchCriteria(null, null, userId);
+        
+        if (needsFlightJoin(pageable)) {
+            spec = spec.and(BookingSpecification.withFlightJoin());
+        }
+        
+        Page<Booking> page = bookingRepository.findAll(spec, pageable);
+        List<BookingResponse> data = page.getContent().stream()
+                .map(mapper::toResponse).toList();
+        PageMeta meta = PageMetaFactory.from(page);
+        return new ListResponse<>(data, meta);
+    }
+
     private boolean needsFlightJoin(Pageable pageable) {
         if (pageable.getSort().isEmpty()) {
             return false;

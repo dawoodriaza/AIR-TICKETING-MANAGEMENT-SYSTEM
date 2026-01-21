@@ -33,6 +33,13 @@ public class BookingController {
         return bookingService.getBookings(pageable);
     }
 
+    @GetMapping("/users/{userId}")
+    public ListResponse<BookingResponse> getBookingsByUserId(
+            @PathVariable Long userId,
+            Pageable pageable) {
+        return bookingService.getBookingsByUserId(userId, pageable);
+    }
+
     @GetMapping("/{id}")
     public BookingResponse getBookingById(@PathVariable Long id) {
         return bookingService.getBookingById(id);
