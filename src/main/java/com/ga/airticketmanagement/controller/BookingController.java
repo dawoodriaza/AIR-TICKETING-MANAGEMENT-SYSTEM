@@ -22,12 +22,14 @@ public class BookingController {
             @RequestParam(required = false) Long flightId,
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) String status,
             Pageable pageable) {
         
         if (id != null || flightId != null || 
             userId != null ||
+            status != null ||
             (search != null && !search.trim().isEmpty())) {
-            return bookingService.searchBookings(id, flightId, userId, search, pageable);
+            return bookingService.searchBookings(id, flightId, userId, search, status, pageable);
         }
         
         return bookingService.getBookings(pageable);

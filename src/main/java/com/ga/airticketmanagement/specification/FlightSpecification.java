@@ -90,8 +90,18 @@ public class FlightSpecification {
             ));
 
             searchPredicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("originAirport").get("code")),
+                    "%" + searchLower + "%"
+            ));
+
+            searchPredicates.add(criteriaBuilder.like(
                 criteriaBuilder.lower(root.get("destinationAirport").get("name")),
                 "%" + searchLower + "%"
+            ));
+
+            searchPredicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("destinationAirport").get("code")),
+                            "%" + searchLower + "%"
             ));
 
             try {
