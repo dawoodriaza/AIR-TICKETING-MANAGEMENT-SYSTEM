@@ -1,5 +1,6 @@
 package com.ga.airticketmanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,11 +35,13 @@ public class Booking {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id",  nullable = false)
+    @JsonBackReference("user-bookings")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "flight_id")
+    @JoinColumn(name = "flight_id", nullable = false)
+    @JsonBackReference("booked-flights")
     private Flight flight;
 }

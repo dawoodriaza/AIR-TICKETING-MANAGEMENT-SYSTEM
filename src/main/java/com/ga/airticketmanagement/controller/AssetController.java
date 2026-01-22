@@ -2,7 +2,7 @@ package com.ga.airticketmanagement.controller;
 
 
 
-import com.ga.airticketmanagement.model.ImageEntity;
+import com.ga.airticketmanagement.model.Asset;
 import com.ga.airticketmanagement.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -42,11 +42,11 @@ public class ImageController {
 
         try {
 
-            ImageEntity savedImage = imageService.saveImage(file, userId);
+            Asset savedImage = imageService.saveImage(file, userId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("id", savedImage.getId());
-            response.put("userId", savedImage.getUserId());
+            response.put("userId", savedImage.getUser().getId());
             response.put("fileName", savedImage.getFileName());
             response.put("originalFileName", savedImage.getOriginalFileName());
             response.put("fileType", savedImage.getFileType());
@@ -75,7 +75,7 @@ public class ImageController {
                         .body("Image not found with fileName: " + fileName);
             }
 
-            ImageEntity image = imageService.getImageByFileName(fileName);
+            Asset image = imageService.getImageByFileName(fileName);
             if (image == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Image metadata not found for fileName: " + fileName);
@@ -98,9 +98,9 @@ public class ImageController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<List<ImageEntity>> getAllImages() {
+    public ResponseEntity<List<Asset>> getAllImages() {
 
-        List<ImageEntity> images = imageService.getAllImages();
+        List<Asset> images = imageService.getAllImages();
 
 
         return ResponseEntity.ok(images);
@@ -122,7 +122,7 @@ public class ImageController {
             }
 
 
-            ImageEntity image = imageService.getImageByFileName(fileName);
+            Asset image = imageService.getImageByFileName(fileName);
 
 
             HttpHeaders headers = new HttpHeaders();

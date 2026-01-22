@@ -1,4 +1,5 @@
 package com.ga.airticketmanagement.model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,9 +25,10 @@ public class UserProfile {
     @Column
     private String profileImg;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     @JsonIgnore
-    @OneToOne(mappedBy = "userProfile", fetch = FetchType.LAZY)
+    @JsonBackReference("user-profile")
     private User user;
-
 
 }
