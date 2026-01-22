@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 
-public interface ImageRepository extends JpaRepository<Asset, Long> {
+public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     Optional<Asset> findByFileName(String fileName);
 

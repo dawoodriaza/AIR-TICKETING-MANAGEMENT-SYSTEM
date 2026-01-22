@@ -3,7 +3,7 @@ package com.ga.airticketmanagement.service;
 import com.ga.airticketmanagement.exception.InformationNotFoundException;
 import com.ga.airticketmanagement.model.Asset;
 import com.ga.airticketmanagement.model.User;
-import com.ga.airticketmanagement.repository.ImageRepository;
+import com.ga.airticketmanagement.repository.AssetRepository;
 import com.ga.airticketmanagement.security.AuthenticatedUserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +22,12 @@ import java.util.UUID;
 
 
 @Service
-public class ImageService {
+public class AssetService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ImageService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AssetService.class);
 
     @Autowired
-    private ImageRepository imageRepository;
+    private AssetRepository assetRepository;
 
 
     @Value("${file.upload-dir}")
@@ -148,7 +148,7 @@ public class ImageService {
         asset.setFilePath(filePath.toString().replace("\\", "/"));
         asset.setUser(user);
 
-        Asset savedEntity = imageRepository.save(asset);
+        Asset savedEntity = assetRepository.save(asset);
         logger.info("ImageEntity saved to database with ID: {}", savedEntity.getId());
         
         return savedEntity;
@@ -159,19 +159,19 @@ public class ImageService {
         if (fileName == null) {
             throw new IllegalArgumentException("Request body is missing");
         }
-        return imageRepository.findByFileName(fileName).orElse(null);
+        return assetRepository.findByFileName(fileName).orElse(null);
     }
 
 
     public List<Asset> getAllImages() {
 
-        return imageRepository.findAll();
+        return assetRepository.findAll();
     }
 
 
     public boolean deleteImage(Long id) {
 
-        Asset asset = imageRepository.findById(id).orElseThrow(()-> new InformationNotFoundException ("imageEntity with Id " + id + " not found"));
+        Asset asset = assetRepository.findById(id).orElseThrow(()-> new InformationNotFoundException ("imageEntity with Id " + id + " not found"));
 
         try {
             Path path = resolveFilePath(asset.getFilePath());
@@ -187,7 +187,7 @@ public class ImageService {
             e.printStackTrace();
         }
         
-        imageRepository.deleteById(id);
+        assetRepository.deleteById(id);
 
         return true;
     }

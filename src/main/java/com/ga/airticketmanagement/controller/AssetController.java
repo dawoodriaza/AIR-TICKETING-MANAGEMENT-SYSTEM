@@ -3,7 +3,7 @@ package com.ga.airticketmanagement.controller;
 
 
 import com.ga.airticketmanagement.model.Asset;
-import com.ga.airticketmanagement.service.ImageService;
+import com.ga.airticketmanagement.service.AssetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +17,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/images")
-public class ImageController {
+public class AssetController {
 
 
     @Autowired
-    private ImageService imageService;
+    private AssetService assetService;
 
 
     @PostMapping("/upload")
@@ -42,7 +42,7 @@ public class ImageController {
 
         try {
 
-            Asset savedImage = imageService.saveImage(file, userId);
+            Asset savedImage = assetService.saveImage(file, userId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("id", savedImage.getId());
@@ -68,14 +68,14 @@ public class ImageController {
     @GetMapping("/{fileName}")
     public ResponseEntity<?> getImage(@PathVariable String fileName) {
         try {
-            byte[] imageBytes = imageService.getImageFile(fileName);
+            byte[] imageBytes = assetService.getImageFile(fileName);
 
             if (imageBytes == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Image not found with fileName: " + fileName);
             }
 
-            Asset image = imageService.getImageByFileName(fileName);
+            Asset image = assetService.getImageByFileName(fileName);
             if (image == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Image metadata not found for fileName: " + fileName);
@@ -100,7 +100,7 @@ public class ImageController {
     @GetMapping("/all")
     public ResponseEntity<List<Asset>> getAllImages() {
 
-        List<Asset> images = imageService.getAllImages();
+        List<Asset> images = assetService.getAllImages();
 
 
         return ResponseEntity.ok(images);
@@ -112,7 +112,7 @@ public class ImageController {
 
         try {
 
-            byte[] imageBytes = imageService.getImageFile(fileName);
+            byte[] imageBytes = assetService.getImageFile(fileName);
 
 
             if (imageBytes == null) {
@@ -122,7 +122,7 @@ public class ImageController {
             }
 
 
-            Asset image = imageService.getImageByFileName(fileName);
+            Asset image = assetService.getImageByFileName(fileName);
 
 
             HttpHeaders headers = new HttpHeaders();
@@ -147,7 +147,7 @@ public class ImageController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteImage(@PathVariable Long id) {
 
-        boolean deleted = imageService.deleteImage(id);
+        boolean deleted = assetService.deleteImage(id);
 
 
         if (deleted) {
