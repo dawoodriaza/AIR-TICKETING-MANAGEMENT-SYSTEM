@@ -1,5 +1,6 @@
 package com.ga.airticketmanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,18 +15,14 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImageEntity {
+public class Asset {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(nullable = false)
     private String fileName;
-
-    @Column(nullable = true)
-    private Long userId;
 
     @Column(nullable = false)
     private String originalFileName;
@@ -44,6 +41,11 @@ public class ImageEntity {
 
     @Column(nullable = false)
     private LocalDateTime uploadedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference("user-assets")
+    private User user;
 
     @PrePersist
     public void prePersist() {

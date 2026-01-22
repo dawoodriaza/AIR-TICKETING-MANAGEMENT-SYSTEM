@@ -3,9 +3,6 @@ package com.ga.airticketmanagement.model;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.FetchMode;
-import org.hibernate.annotations.Fetch;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.List;
 @Setter
@@ -41,21 +38,29 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role = Role.CUSTOMER;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("user-profile")
     private UserProfile userProfile;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference("created-airports")
     @JsonIgnore
     private List<Airport> createdAirports;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference("created-flights")
     @JsonIgnore
     private List<Flight> createdFlights;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference("user-bookings")
     @JsonIgnore
     private List<Booking> bookings;
+
+    @OneToMany(mappedBy="user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("user-assets")
+    @JsonIgnore
+    private List<Asset> assets;
 
     @JsonIgnore
     public String getPassword() {

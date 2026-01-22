@@ -1,8 +1,10 @@
 package com.ga.airticketmanagement.service;
 
 import com.ga.airticketmanagement.exception.InformationNotFoundException;
-import com.ga.airticketmanagement.model.ImageEntity;
-import com.ga.airticketmanagement.repository.ImageRepository;
+import com.ga.airticketmanagement.model.Asset;
+import com.ga.airticketmanagement.model.User;
+import com.ga.airticketmanagement.repository.AssetRepository;
+import com.ga.airticketmanagement.security.AuthenticatedUserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +22,18 @@ import java.util.UUID;
 
 
 @Service
-public class ImageService {
+public class AssetService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ImageService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AssetService.class);
 
     @Autowired
-    private ImageRepository imageRepository;
+    private AssetRepository assetRepository;
 
 
     @Value("${file.upload-dir}")
     private String uploadDir;
+    @Autowired
+    private AuthenticatedUserProvider authenticatedUserProvider;
 
 
     private Path resolveUploadDirectory() {
@@ -92,7 +96,8 @@ public class ImageService {
     }
 
 
-    public ImageEntity saveImage(MultipartFile file, Long userId) throws IOException {
+    public Asset saveImage(MultipartFile file, Long userId) throws IOException {
+        User user = authenticatedUserProvider.getAuthenticatedUser();
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty or null");
         }
@@ -135,54 +140,54 @@ public class ImageService {
             throw new IOException("File was not saved. Path: " + filePath);
         }
 
-        ImageEntity imageEntity = new ImageEntity();
-        imageEntity.setFileName(uniqueFileName);
-        imageEntity.setOriginalFileName(originalFileName);
-        imageEntity.setFileType(contentType);
-        imageEntity.setFileSize(fileSize);
-        imageEntity.setFilePath(filePath.toString().replace("\\", "/"));
-        imageEntity.setUserId(userId);
+        Asset asset = new Asset();
+        asset.setFileName(uniqueFileName);
+        asset.setOriginalFileName(originalFileName);
+        asset.setFileType(contentType);
+        asset.setFileSize(fileSize);
+        asset.setFilePath(filePath.toString().replace("\\", "/"));
+        asset.setUser(user);
 
-        ImageEntity savedEntity = imageRepository.save(imageEntity);
+        Asset savedEntity = assetRepository.save(asset);
         logger.info("ImageEntity saved to database with ID: {}", savedEntity.getId());
         
         return savedEntity;
     }
 
 
-    public ImageEntity getImageByFileName(String fileName) {
+    public Asset getImageByFileName(String fileName) {
         if (fileName == null) {
             throw new IllegalArgumentException("Request body is missing");
         }
-        return imageRepository.findByFileName(fileName).orElse(null);
+        return assetRepository.findByFileName(fileName).orElse(null);
     }
 
 
-    public List<ImageEntity> getAllImages() {
+    public List<Asset> getAllImages() {
 
-        return imageRepository.findAll();
+        return assetRepository.findAll();
     }
 
 
     public boolean deleteImage(Long id) {
 
-        ImageEntity imageEntity = imageRepository.findById(id).orElseThrow(()-> new InformationNotFoundException ("imageEntity with Id " + id + " not found"));
+        Asset asset = assetRepository.findById(id).orElseThrow(()-> new InformationNotFoundException ("imageEntity with Id " + id + " not found"));
 
         try {
-            Path path = resolveFilePath(imageEntity.getFilePath());
+            Path path = resolveFilePath(asset.getFilePath());
             
             if (path != null && Files.exists(path)) {
                 Files.deleteIfExists(path);
                 logger.info("Deleted image file: {}", path);
             } else {
-                logger.warn("Image file not found for deletion: {}", imageEntity.getFilePath());
+                logger.warn("Image file not found for deletion: {}", asset.getFilePath());
             }
         } catch (IOException e) {
-            logger.error("Failed to delete image file: {}", imageEntity.getFilePath(), e);
+            logger.error("Failed to delete image file: {}", asset.getFilePath(), e);
             e.printStackTrace();
         }
         
-        imageRepository.deleteById(id);
+        assetRepository.deleteById(id);
 
         return true;
     }
@@ -190,7 +195,7 @@ public class ImageService {
 
     public byte[] getImageFile(String fileName) throws IOException {
 
-        ImageEntity image = getImageByFileName(fileName);
+        Asset image = getImageByFileName(fileName);
 
         if (image == null) {
             return null;

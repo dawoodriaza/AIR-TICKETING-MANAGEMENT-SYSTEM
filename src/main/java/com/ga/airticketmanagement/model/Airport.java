@@ -1,6 +1,8 @@
 package com.ga.airticketmanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,16 +45,19 @@ public class Airport {
     @Column
     private LocalDateTime updatedAt;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "originAirport")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "originAirport")
+    @JsonManagedReference("flight-origin")
     @JsonIgnore
     private List<Flight> originFlights;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "destinationAirport")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "destinationAirport")
+    @JsonManagedReference("flight-destination")
     @JsonIgnore
     private List<Flight> destinationFlights;
 
-    @ManyToOne
-    @JoinColumn(name="user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference("created-airports")
     @JsonIgnore
     private User user;
 }
