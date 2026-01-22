@@ -43,11 +43,11 @@ public class Airport {
     @Column
     private LocalDateTime updatedAt;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "originAirport", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "originAirport")
     @JsonIgnore
     private List<Flight> originFlights;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "destinationAirport", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "destinationAirport")
     @JsonIgnore
     private List<Flight> destinationFlights;
 
