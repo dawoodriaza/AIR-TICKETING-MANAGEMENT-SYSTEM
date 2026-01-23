@@ -16,7 +16,6 @@ import com.ga.airticketmanagement.repository.FlightRepository;
 import com.ga.airticketmanagement.security.AuthenticatedUserProvider;
 import com.ga.airticketmanagement.specification.BookingSpecification;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingService {
@@ -52,17 +50,19 @@ public class BookingService {
             Long flightId,
             Long userId,
             String search,
+            String status,
             Pageable pageable
     ) {
         Specification<Booking> spec;
         
         boolean hasSpecificCriteria = id != null || 
             flightId != null || 
-            userId != null;
+            userId != null ||
+            status != null;
         
         if (hasSpecificCriteria) {
             spec = BookingSpecification.withSearchCriteria(
-                    id, flightId, userId
+                    id, flightId, userId, status
             );
             if (search != null && !search.trim().isEmpty()) {
                 spec = spec.and(BookingSpecification.withGeneralSearch(search));
@@ -87,7 +87,7 @@ public class BookingService {
     }
 
     public ListResponse<BookingResponse> getBookingsByUserId(Long userId, Pageable pageable) {
-        Specification<Booking> spec = BookingSpecification.withSearchCriteria(null, null, userId);
+        Specification<Booking> spec = BookingSpecification.withSearchCriteria(null, null, userId, null);
         
         if (needsFlightJoin(pageable)) {
             spec = spec.and(BookingSpecification.withFlightJoin());
@@ -118,7 +118,6 @@ public class BookingService {
 
     @Transactional
     public BookingResponse updateBookingById(Long id, BookingRequest bookingRequest) {
-        log.debug(bookingRequest.getStatus().toString());
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() ->
                         new InformationNotFoundException("Booking with Id " + id + " not found"));

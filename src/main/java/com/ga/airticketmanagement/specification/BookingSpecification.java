@@ -22,7 +22,8 @@ public class BookingSpecification {
     public static Specification<Booking> withSearchCriteria(
             Long id,
             Long flightId,
-            Long userId
+            Long userId,
+            String status
     ) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -45,6 +46,14 @@ public class BookingSpecification {
                 ));
             }
 
+            if(status != null) {
+                String lowerStatus = status.toLowerCase().trim();
+                predicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("status")),
+                        lowerStatus
+                ));
+            }
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
@@ -55,6 +64,7 @@ public class BookingSpecification {
                 return criteriaBuilder.conjunction();
             }
 
+            String searchLower = search.toLowerCase().trim();
             List<Predicate> searchPredicates = new ArrayList<>();
 
             try {
@@ -77,6 +87,16 @@ public class BookingSpecification {
                 searchPredicates.add(criteriaBuilder.equal(
                     root.get("user").get("id"),
                     userId
+                ));
+            } catch (NumberFormatException e) {
+            }
+
+            try {
+
+                searchPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(
+                        root.get("user").get("emailAddress")),
+                        "%" + searchLower + "%"
                 ));
             } catch (NumberFormatException e) {
             }
