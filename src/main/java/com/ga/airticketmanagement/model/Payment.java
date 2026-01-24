@@ -2,6 +2,7 @@ package com.ga.airticketmanagement.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -17,25 +18,33 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private Double amount;
 
-    @Column
+    @Column(nullable = false)
     private String status;
 
-    @Column
+    @Column(unique = true)
     private String transactionRef;
 
     @Column
+    private String method;
+
+    @CreationTimestamp
+    @Column(name = "paid_at", updatable = false)
     private LocalDateTime paidAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id")
+    @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
-    @OneToOne(mappedBy = "payment", fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @OneToOne(mappedBy = "payment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private SmsLog smsLog;
 
-    @OneToOne(mappedBy = "payment", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "payment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private WhatsAppLog whatsAppLog;
 }
