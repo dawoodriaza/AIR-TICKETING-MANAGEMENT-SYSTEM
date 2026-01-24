@@ -71,4 +71,8 @@ public class User {
     public void prePersist(){
         this.active = true;
     }
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Payment> payments;
 }
