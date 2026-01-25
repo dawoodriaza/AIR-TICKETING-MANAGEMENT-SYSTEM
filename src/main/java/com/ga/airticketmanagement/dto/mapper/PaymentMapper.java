@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-@Mapper(componentModel = "spring", uses = {BookingMapper.class})
+@Mapper(componentModel = "spring")
 public interface PaymentMapper {
 
     @Mappings({
@@ -16,13 +16,6 @@ public interface PaymentMapper {
             @Mapping(source = "user.emailAddress", target = "userEmail")
     })
     PaymentResponse toResponse(Payment payment);
-
-    @Mappings({
-            @Mapping(source = "booking.id", target = "bookingId"),
-            @Mapping(source = "user.id", target = "userId"),
-            @Mapping(source = "user.emailAddress", target = "userEmail")
-    })
-    PaymentWithBookingResponse toDetailedResponse(Payment payment);
 
     @Mappings({
             @Mapping(target = "id", ignore = true),
